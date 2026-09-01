@@ -20,7 +20,7 @@ the app with several months of realistic history and try every screen at once.
 | ------------ | ------------------------------------------------------------ |
 | **Today**    | What is left today, what is done, how the week is going       |
 | **Habits**   | Create, edit, archive, delete, reorder; per-habit record      |
-| **Calendar** | Month and week history; click any day to see and fix it       |
+| **Calendar** | Month and week history; swipe or drag sideways to move through |
 | **Goals**    | Weekly and monthly targets with progress, pace and status     |
 | **Insights** | Completion rates, trends, per-habit breakdown, milestones     |
 | **Settings** | Theme, start of week, categories, export / import / delete    |
@@ -78,9 +78,14 @@ a single malformed record from an imported file is dropped, not thrown.
 **Milestones are derived, never stored.** Recomputing them keeps them honest
 after an edit, an import, or a deleted habit.
 
+**The calendar opens two months ahead.** Far enough to see what a new habit
+commits you to, close enough that history stays the point of the screen. Future
+days are always read-only, and a month that has not happened says "Still to
+come" rather than reporting 0 %.
+
 ## Testing
 
-174 tests, covering the logic that is easy to get quietly wrong:
+180 tests, covering the logic that is easy to get quietly wrong:
 
 - **Dates** — month and year boundaries, leap days, DST, week starts, clamping
   (31 Jan + 1 month is 28 Feb, not 3 Mar), and the midnight rollover: an app
@@ -92,7 +97,8 @@ after an edit, an import, or a deleted habit.
 - **Statistics** — rates, perfect days, best streaks, future days excluded.
 - **Persistence** — round-trips, migrations, and malformed input.
 - **The app itself** — creating, completing and undoing habits, validation,
-  navigation, and settings, driven through the real UI.
+  navigation, the two-month forward limit, and settings, driven through the
+  real UI.
 
 The UI was also checked in a real browser at 320 / 390 / 834 / 1440 px in both
 themes: no console errors, no horizontal overflow, focus trapped in dialogs,
@@ -108,6 +114,9 @@ focus-trapped `role="dialog"`s; progress bars expose their values; state is
 never carried by colour alone (checks, counts and text back it up); visible
 focus rings throughout; `prefers-reduced-motion` is honoured and can also be
 forced on in Settings.
+
+Form fields are 16 px on phones. Below that, iOS Safari zooms the page in on
+focus and the user has to scroll sideways to reach the next control.
 
 Touch targets are at least 32 px on phones. Where a control is drawn smaller
 than that for visual balance, a `touch-target` utility grows its hit area to

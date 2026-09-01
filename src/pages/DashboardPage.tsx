@@ -17,6 +17,7 @@ import { HabitDialog } from '@/components/habits/HabitDialog';
 import { HabitDetail } from '@/components/habits/HabitDetail';
 import { WeekStrip } from '@/components/calendar/WeekStrip';
 import { GoalRow } from '@/components/goals/GoalRow';
+import { futureHorizon } from '@/app/config';
 import { useHabitActions } from '@/hooks/useHabitActions';
 import { useFollowsToday } from '@/hooks/useToday';
 import {
@@ -247,12 +248,18 @@ export function DashboardPage() {
             <WeekStrip
               summaries={weekSummaries}
               today={today}
+              maxDate={futureHorizon(today)}
               selected={selectedDate}
               onSelect={(date) => {
                 setSelectedDate(date);
                 setWeekAnchor(date);
               }}
-              onShift={(weeks) => setWeekAnchor((anchor) => addDays(anchor, weeks * 7))}
+              onShift={(weeks) =>
+                setWeekAnchor((anchor) => {
+                  const next = addDays(anchor, weeks * 7);
+                  return next > futureHorizon(today) ? anchor : next;
+                })
+              }
             />
             <p className="sr-only">
               Week of {week.start} to {week.end}

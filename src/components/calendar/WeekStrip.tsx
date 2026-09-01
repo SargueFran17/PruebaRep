@@ -14,6 +14,8 @@ interface WeekStripProps {
   onSelect: (date: DateKey) => void;
   onShift?: (weeks: number) => void;
   showNavigation?: boolean;
+  /** Furthest day the strip will navigate to. Defaults to today. */
+  maxDate?: DateKey;
 }
 
 /** The week at a glance: seven columns, each a bar of the day's completion. */
@@ -24,7 +26,9 @@ export function WeekStrip({
   onSelect,
   onShift,
   showNavigation = true,
+  maxDate,
 }: WeekStripProps) {
+  const limit = maxDate ?? today;
   const first = summaries[0]?.date;
   const last = summaries[summaries.length - 1]?.date;
 
@@ -40,7 +44,7 @@ export function WeekStrip({
               </NavButton>
               <NavButton
                 label="Next week"
-                disabled={last >= today}
+                disabled={Boolean(last && last >= limit)}
                 onClick={() => onShift(1)}
               >
                 <ChevronRight size={16} strokeWidth={1.75} aria-hidden />

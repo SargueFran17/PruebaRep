@@ -334,7 +334,7 @@ function CategoryNameInput({
       onBlur={() => {
         if (!draft.trim()) setDraft(category.name);
       }}
-      className="min-w-0 flex-1 rounded-sm bg-transparent px-1 py-1 text-[14px] text-ink transition-colors hover:bg-sunken focus:bg-sunken focus:outline-none"
+      className="min-w-0 flex-1 rounded-sm bg-transparent px-1 py-1 text-base text-ink transition-colors hover:bg-sunken focus:bg-sunken focus:outline-none sm:text-[14px]"
     />
   );
 }

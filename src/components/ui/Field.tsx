@@ -2,8 +2,11 @@ import { useId } from 'react';
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
+// 16px on phones is deliberate: iOS Safari zooms the whole page in when a
+// focused field is smaller than that, which then forces sideways scrolling.
+// Desktop keeps the tighter 14px.
 const CONTROL =
-  'w-full rounded-md border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-faint ' +
+  'w-full rounded-md border border-line-strong bg-surface px-3 text-base sm:text-sm text-ink placeholder:text-faint ' +
   'transition-colors duration-150 hover:border-accent-line focus:border-accent-text focus:outline-none ' +
   'focus-visible:outline-2 focus-visible:outline-accent-text focus-visible:outline-offset-1 disabled:opacity-50';
 

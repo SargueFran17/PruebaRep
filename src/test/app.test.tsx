@@ -162,6 +162,32 @@ describe('navigation', () => {
     expect(screen.getAllByRole('progressbar').length).toBeGreaterThan(0);
   });
 
+  it('allows browsing two months ahead but no further', async () => {
+    const user = userEvent.setup();
+    await renderApp('/calendar');
+    await screen.findByRole('heading', { name: 'Calendar' });
+
+    const next = () => screen.getByRole('button', { name: 'Next month' });
+    const monthHeading = () => screen.getAllByRole('heading', { level: 2 })[0]?.textContent ?? '';
+    const start = monthHeading();
+
+    await user.click(next());
+    await user.click(next());
+    expect(monthHeading()).not.toBe(start);
+
+    // Two months of headroom is the whole allowance.
+    expect(next()).toBeDisabled();
+  });
+
+  it('does not report a future month as zero per cent', async () => {
+    const user = userEvent.setup();
+    await renderApp('/calendar');
+    await screen.findByRole('heading', { name: 'Calendar' });
+
+    await user.click(screen.getByRole('button', { name: 'Next month' }));
+    expect(await screen.findByText('Still to come')).toBeInTheDocument();
+  });
+
   it('lets the user open a day on the calendar', async () => {
     const user = userEvent.setup();
     await renderApp('/calendar');

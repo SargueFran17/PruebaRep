@@ -12,6 +12,8 @@ import {
 import type { Habit } from '@/domain/types';
 import { Button, Card, CardBody, CardHeader, EmptyState, SegmentedControl } from '@/components/ui';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { futureHorizon, futureMonthLimit } from '@/app/config';
+import { useSwipe } from '@/hooks/useSwipe';
 import { MonthGrid } from '@/components/calendar/MonthGrid';
 import { WeekStrip } from '@/components/calendar/WeekStrip';
 import { LEGEND, TONE_FILL } from '@/components/calendar/dayTone';
@@ -70,11 +72,28 @@ export function CalendarPage() {
       : 0;
   const perfectCount = monthDays.filter((summary) => summary.perfect).length;
 
+  const horizon = futureHorizon(today);
+
   const shiftMonth = (delta: number) => {
-    const next = addMonths(monthStart, delta);
-    setAnchor(next);
-    setSelected(isSameMonth(today, next) ? today : startOfMonth(next));
+    const target = addMonths(monthStart, delta);
+    if (target > futureMonthLimit(today)) return;
+    setAnchor(target);
+    setSelected(isSameMonth(today, target) ? today : startOfMonth(target));
   };
+
+  const shiftWeek = (delta: number) => {
+    const target = addDays(anchor, delta * 7);
+    if (startOfWeek(target, weekStart) > horizon) return;
+    setAnchor(target);
+    setSelected(target);
+  };
+
+  // Drag or swipe sideways to move through time; the arrows do the same thing
+  // and stay for keyboard and assistive technology.
+  const swipe = useSwipe({
+    onSwipeLeft: () => (view === 'month' ? shiftMonth(1) : shiftWeek(1)),
+    onSwipeRight: () => (view === 'month' ? shiftMonth(-1) : shiftWeek(-1)),
+  });
 
   if (habits.length === 0) {
     return (
@@ -120,8 +139,14 @@ export function CalendarPage() {
                 {formatMonthYear(monthStart)}
               </h2>
               <p className="mt-0.5 text-[12.5px] text-muted">
-                {formatPercent(monthRate)} average · {perfectCount}{' '}
-                {pluralise(perfectCount, 'perfect day')}
+                {monthDays.length === 0
+                  ? monthStart > today
+                    ? 'Still to come'
+                    : 'Nothing recorded'
+                  : `${formatPercent(monthRate)} average · ${perfectCount} ${pluralise(
+                      perfectCount,
+                      'perfect day',
+                    )}`}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1">
@@ -140,7 +165,7 @@ export function CalendarPage() {
               </Button>
               <NavButton
                 label="Next month"
-                disabled={startOfMonth(today) <= monthStart}
+                disabled={monthStart >= futureMonthLimit(today)}
                 onClick={() => shiftMonth(1)}
               >
                 <ChevronRight size={16} strokeWidth={1.75} aria-hidden />
@@ -149,28 +174,34 @@ export function CalendarPage() {
           </div>
 
           <CardBody>
-            {view === 'month' ? (
-              <MonthGrid
-                month={monthStart}
-                summaries={summaryMap}
-                today={today}
-                weekStart={weekStart}
-                selected={selected}
-                onSelect={setSelected}
-              />
-            ) : (
-              <WeekStrip
-                summaries={weekSummaries}
-                today={today}
-                selected={selected}
-                onSelect={setSelected}
-                onShift={(weeks) => {
-                  const next = addDays(anchor, weeks * 7);
-                  setAnchor(next);
-                  setSelected(next);
-                }}
-              />
-            )}
+            <div
+              {...swipe.bindings}
+              className="touch-pan-y select-none"
+              style={{
+                transform: `translateX(${swipe.offset}px)`,
+                transition: swipe.dragging ? 'none' : 'transform 220ms var(--ease-out-soft)',
+              }}
+            >
+              {view === 'month' ? (
+                <MonthGrid
+                  month={monthStart}
+                  summaries={summaryMap}
+                  today={today}
+                  weekStart={weekStart}
+                  selected={selected}
+                  onSelect={setSelected}
+                />
+              ) : (
+                <WeekStrip
+                  summaries={weekSummaries}
+                  today={today}
+                  maxDate={horizon}
+                  selected={selected}
+                  onSelect={setSelected}
+                  onShift={shiftWeek}
+                />
+              )}
+            </div>
 
             <ul className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4">
               {LEGEND.map((item) => (
@@ -218,9 +249,11 @@ export function CalendarPage() {
             />
             {habitsForDay.length > 0 ? (
               <p className="px-5 pt-3 pb-5 text-[12px] text-faint">
-                {selected < today
-                  ? 'You can still correct a past day — the record should match what happened.'
-                  : 'Tap a circle to complete a habit.'}
+                {selected > today
+                  ? 'Planned for this day. You can tick habits off once the day arrives.'
+                  : selected < today
+                    ? 'You can still correct a past day — the record should match what happened.'
+                    : 'Tap a circle to complete a habit.'}
               </p>
             ) : null}
           </CardBody>
