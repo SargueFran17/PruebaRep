@@ -45,9 +45,14 @@ domain`. `domain/` imports nothing from the layers above it, which is what makes
 the streak, goal and statistics rules testable without rendering anything.
 
 **Stack.** React 19 + TypeScript, Vite, Tailwind CSS v4, Zustand, Vitest and
-Testing Library. Charts are hand-written SVG and CSS rather than a charting
-library — there are three of them, they need to match the palette exactly, and a
-chart library would have been the largest dependency in the project.
+Testing Library. Six runtime dependencies in total.
+
+Two things are deliberately hand-written rather than installed. Charts are SVG
+and CSS: there are three of them, they have to match the palette exactly, and a
+charting library would have been the largest dependency here. Dates are the
+module in `domain/dates.ts`: the app needs perhaps a dozen operations on local
+calendar days, and owning them is what let the DST and midnight-rollover
+behaviour be pinned down by tests rather than trusted.
 
 ### Decisions worth knowing
 
