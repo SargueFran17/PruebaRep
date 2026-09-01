@@ -1,0 +1,9 @@
+# Cadence is a single-page app: the five routes below only exist in the
+# browser, so any path that is not a real file must be answered with
+# index.html and React Router takes it from there.
+#
+# Status 200, not 302: /goals is a real page of this app, and a visitor
+# landing there directly — or pressing reload — should get it, not a redirect
+# and not a 404. Netlify serves existing files first, so the built assets
+# under /assets/ are unaffected by this rule.
+/*    /index.html   200
