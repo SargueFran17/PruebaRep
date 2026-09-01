@@ -25,6 +25,9 @@ the app with several months of realistic history and try every screen at once.
 | **Insights** | Completion rates, trends, per-habit breakdown, milestones     |
 | **Settings** | Theme, start of week, categories, export / import / delete    |
 
+Cadence installs to a phone's home screen and runs offline: the whole app is
+403 KB, so it is precached in full and there is nothing to wait for.
+
 Habits can be a simple check or a measured amount (30 min, 2 L, 20 pages), and
 run daily, on named weekdays, *N* times per week, or *N* times per month.
 
@@ -79,6 +82,14 @@ storage-agnostic; `LocalStorageAdapter` is the only implementation that touches
 the browser. Moving to a backend means writing one more adapter, not touching a
 component. Payloads are versioned, migrated on read, and validated defensively —
 a single malformed record from an imported file is dropped, not thrown.
+
+**Offline is the normal case, not a fallback.** The app makes no network
+requests at runtime, so a service worker precaching the entire bundle is enough
+for it to work fully offline — creating habits, ticking them off, every
+statistic. Only the fonts come from elsewhere, and they are cached on first
+load. On iOS this matters twice over: Safari clears script storage after seven
+days away, and home-screen apps are exempt, so installing is what protects the
+history.
 
 **Milestones are derived, never stored.** Recomputing them keeps them honest
 after an edit, an import, or a deleted habit.

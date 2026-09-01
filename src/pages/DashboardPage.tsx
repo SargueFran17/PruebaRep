@@ -18,6 +18,7 @@ import { HabitDetail } from '@/components/habits/HabitDetail';
 import { WeekStrip } from '@/components/calendar/WeekStrip';
 import { GoalRow } from '@/components/goals/GoalRow';
 import { futureHorizon } from '@/app/config';
+import { InstallHint } from '@/components/layout/InstallHint';
 import { useHabitActions } from '@/hooks/useHabitActions';
 import { useFollowsToday } from '@/hooks/useToday';
 import {
@@ -310,6 +311,8 @@ export function DashboardPage() {
       </div>
 
       <QuickStats />
+
+      <InstallHint />
 
       <HabitDialog open={creating} onClose={() => setCreating(false)} />
       <HabitDialog
