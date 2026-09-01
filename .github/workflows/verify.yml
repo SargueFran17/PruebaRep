@@ -1,0 +1,44 @@
+name: Verify
+
+# Every push, so a branch is checked before a pull request even exists, and
+# every pull request aimed at main, so nothing lands there unverified.
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+# A new push supersedes the run in flight for the same branch.
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck, tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          # Matches the "engines" field in package.json.
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        # `ci` installs the lockfile exactly, and fails if it has drifted
+        # from package.json — which is what you want from a gate.
+        run: npm ci
+
+      - name: Verify
+        # One command so the gate cannot drift from the one developers run
+        # locally. It is lint, then typecheck, then tests, then a production
+        # build; npm names the failing step in the log.
+        run: npm run verify
