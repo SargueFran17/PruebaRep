@@ -404,7 +404,7 @@ function Counter({
           aria-label={`Decrease ${label}`}
           disabled={value <= min}
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="grid h-7 w-7 place-items-center rounded-full border border-line-strong text-muted transition-colors hover:text-ink disabled:opacity-35"
+          className="touch-target grid h-8 w-8 place-items-center rounded-full border border-line-strong text-muted transition-colors hover:text-ink disabled:opacity-35"
         >
           −
         </button>
@@ -416,7 +416,7 @@ function Counter({
           aria-label={`Increase ${label}`}
           disabled={value >= max}
           onClick={() => onChange(Math.min(max, value + 1))}
-          className="grid h-7 w-7 place-items-center rounded-full border border-line-strong text-muted transition-colors hover:text-ink disabled:opacity-35"
+          className="touch-target grid h-8 w-8 place-items-center rounded-full border border-line-strong text-muted transition-colors hover:text-ink disabled:opacity-35"
         >
           +
         </button>

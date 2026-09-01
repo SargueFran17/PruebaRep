@@ -105,6 +105,12 @@ export function HabitsPage() {
         </div>
       ) : null}
 
+      {visible.length > 1 && filter === 'active' && category !== 'all' ? (
+        <p className="mb-3 text-[12.5px] text-faint">
+          Showing one category — clear the filter to reorder your habits.
+        </p>
+      ) : null}
+
       {visible.length === 0 ? (
         <Card>
           <EmptyState
@@ -198,7 +204,7 @@ export function HabitsPage() {
                       </div>
 
                       {canReorder ? (
-                        <div className="flex shrink-0 flex-col gap-0.5">
+                        <div className="flex shrink-0 flex-col gap-1">
                           <ReorderButton
                             label={`Move ${habit.name} up`}
                             disabled={index === 0}
@@ -310,7 +316,7 @@ function CategoryChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'shrink-0 rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors duration-150',
+        'shrink-0 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-150',
         active
           ? 'border-accent bg-accent text-accent-contrast'
           : 'border-line bg-surface text-muted hover:border-accent-line hover:text-ink',
@@ -338,7 +344,7 @@ function ReorderButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="grid h-7 w-7 place-items-center rounded-md text-faint transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-25"
+      className="grid h-9 w-9 place-items-center rounded-md text-faint transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-25"
     >
       {children}
     </button>

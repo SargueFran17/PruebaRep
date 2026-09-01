@@ -4,7 +4,7 @@ import type { DateKey, WeekStart } from '@/domain/types';
 import { MIN_DAYS, SHORT_DAYS } from '@/domain/frequency';
 import { cn } from '@/lib/cn';
 import { formatLongDate } from '@/lib/format';
-import { dayTone, TONE_FILL, TONE_LABEL, TONE_TEXT } from './dayTone';
+import { dayTone, describeDay, TONE_FILL, TONE_TEXT } from './dayTone';
 
 interface MonthGridProps {
   month: DateKey;
@@ -65,11 +65,7 @@ export function MonthGrid({
               onClick={() => onSelect(date)}
               aria-current={isToday ? 'date' : undefined}
               aria-pressed={isSelected}
-              aria-label={`${formatLongDate(date)} — ${
-                summary.rate === null && date <= today
-                  ? 'nothing scheduled'
-                  : `${summary.completed} of ${summary.scheduled} habits, ${TONE_LABEL[tone]}`
-              }`}
+              aria-label={describeDay(summary, today, formatLongDate(date))}
               className={cn(
                 'group relative aspect-square rounded-md transition-[transform,box-shadow] duration-150',
                 'hover:z-10 hover:scale-[1.06] focus-visible:z-10',

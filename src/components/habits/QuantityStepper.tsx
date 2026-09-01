@@ -66,7 +66,7 @@ function StepButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="grid h-7 w-7 place-items-center rounded-full text-muted transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-35"
+      className="touch-target grid h-7 w-7 place-items-center rounded-full text-muted transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-35"
     >
       {children}
     </button>

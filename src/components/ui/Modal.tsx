@@ -112,7 +112,7 @@ export function Modal({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="-mr-1 -mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted transition-colors hover:bg-sunken hover:text-ink"
+            className="touch-target -mr-1 -mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted transition-colors hover:bg-sunken hover:text-ink"
           >
             <X size={17} strokeWidth={1.75} />
           </button>

@@ -1,4 +1,4 @@
-import { fromDateKey } from '@/domain/dates';
+import { fromDateKey, todayKey } from '@/domain/dates';
 import { formatMeasure } from '@/domain/goals';
 import type { DateKey } from '@/domain/types';
 
@@ -19,12 +19,22 @@ const longDate = new Intl.DateTimeFormat(undefined, {
   month: 'long',
   day: 'numeric',
 });
+const longDateWithYear = new Intl.DateTimeFormat(undefined, {
+  weekday: 'long',
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
 const mediumDate = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
 const monthYear = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' });
 const monthOnly = new Intl.DateTimeFormat(undefined, { month: 'long' });
 
-export function formatLongDate(key: DateKey): string {
-  return longDate.format(fromDateKey(key));
+/** Adds the year only when it is not the current one, to keep today's header short. */
+export function formatLongDate(key: DateKey, today: DateKey = todayKey()): string {
+  const date = fromDateKey(key);
+  return key.slice(0, 4) === today.slice(0, 4)
+    ? longDate.format(date)
+    : longDateWithYear.format(date);
 }
 
 export function formatMediumDate(key: DateKey): string {

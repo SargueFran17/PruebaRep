@@ -18,7 +18,14 @@ import { HabitDetail } from '@/components/habits/HabitDetail';
 import { WeekStrip } from '@/components/calendar/WeekStrip';
 import { GoalRow } from '@/components/goals/GoalRow';
 import { useHabitActions } from '@/hooks/useHabitActions';
-import { formatLongDate, formatPercent, greetingFor, pluralise } from '@/lib/format';
+import { useFollowsToday } from '@/hooks/useToday';
+import {
+  formatLongDate,
+  formatMediumDate,
+  formatPercent,
+  greetingFor,
+  pluralise,
+} from '@/lib/format';
 import {
   useActiveHabits,
   useGoalProgress,
@@ -38,6 +45,9 @@ export function DashboardPage() {
 
   const [selectedDate, setSelectedDate] = useState(today);
   const [weekAnchor, setWeekAnchor] = useState(today);
+  // If midnight passes while the dashboard is open, follow it — otherwise the
+  // next tap would be recorded against yesterday.
+  useFollowsToday(today, [setSelectedDate, setWeekAnchor]);
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Habit | undefined>();
   const [detail, setDetail] = useState<Habit | undefined>();
@@ -62,6 +72,9 @@ export function DashboardPage() {
   );
 
   const rate = habitsForDay.length > 0 ? done.length / habitsForDay.length : 0;
+  // A habit whose start date has not arrived is invisible on this screen, which
+  // otherwise reads as "nothing here" right after the user created one.
+  const upcoming = allHabits.filter((habit) => habit.startDate > selectedDate);
   const isToday = selectedDate === today;
   const week = weekRange(weekAnchor, weekStart);
   const weekDays = weekSummaries.filter((summary) => summary.rate !== null);
@@ -192,9 +205,11 @@ export function DashboardPage() {
                 icon={<Sparkles size={18} strokeWidth={1.75} aria-hidden />}
                 title={habitsForDay.length === 0 ? 'A clear day' : 'All done'}
                 description={
-                  habitsForDay.length === 0
-                    ? 'No habits are scheduled for this day.'
-                    : 'Everything scheduled for this day is complete.'
+                  habitsForDay.length > 0
+                    ? 'Everything scheduled for this day is complete.'
+                    : upcoming.length > 0
+                      ? `Nothing scheduled yet — ${upcoming[0]?.name} starts on ${formatMediumDate(upcoming[0]?.startDate ?? selectedDate)}.`
+                      : 'No habits are scheduled for this day.'
                 }
               />
             </Card>
@@ -251,7 +266,7 @@ export function DashboardPage() {
             action={
               <Link
                 to="/goals"
-                className="inline-flex items-center gap-1 rounded-sm text-[12.5px] font-medium text-accent-text hover:underline"
+                className="-my-1 inline-flex items-center gap-1 rounded-sm py-1 text-[12.5px] font-medium text-accent-text hover:underline"
               >
                 All goals
                 <ArrowRight size={13} strokeWidth={2} aria-hidden />

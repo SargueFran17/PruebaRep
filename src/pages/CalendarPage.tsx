@@ -19,6 +19,7 @@ import { HabitList } from '@/components/habits/HabitList';
 import { HabitDetail } from '@/components/habits/HabitDetail';
 import { HabitDialog } from '@/components/habits/HabitDialog';
 import { useHabitActions } from '@/hooks/useHabitActions';
+import { useFollowsToday } from '@/hooks/useToday';
 import { formatLongDate, formatMonthYear, formatPercent, pluralise } from '@/lib/format';
 import {
   useHabits,
@@ -41,6 +42,7 @@ export function CalendarPage() {
   const [view, setView] = useState<View>('month');
   const [anchor, setAnchor] = useState(today);
   const [selected, setSelected] = useState(today);
+  useFollowsToday(today, [setAnchor, setSelected]);
   const [detail, setDetail] = useState<Habit | undefined>();
   const [editing, setEditing] = useState<Habit | undefined>();
 
@@ -256,7 +258,7 @@ function NavButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="grid h-8 w-8 place-items-center rounded-md border border-line text-muted transition-colors hover:border-accent-line hover:text-ink disabled:pointer-events-none disabled:opacity-35"
+      className="grid h-9 w-9 place-items-center rounded-md border border-line text-muted transition-colors hover:border-accent-line hover:text-ink disabled:pointer-events-none disabled:opacity-35"
     >
       {children}
     </button>

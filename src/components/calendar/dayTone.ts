@@ -43,6 +43,18 @@ export const TONE_LABEL: Record<DayTone, string> = {
   perfect: 'perfect day',
 };
 
+/**
+ * One sentence describing a day, shared by the month grid and the week strip so
+ * both read identically to a screen reader. A future day is "upcoming", never
+ * "nothing scheduled" — nothing has been missed yet.
+ */
+export function describeDay(summary: DaySummary, today: string, longDate: string): string {
+  const tone = dayTone(summary, today);
+  if (tone === 'future') return `${longDate} — upcoming`;
+  if (summary.rate === null) return `${longDate} — nothing scheduled`;
+  return `${longDate} — ${summary.completed} of ${summary.scheduled} habits, ${TONE_LABEL[tone]}`;
+}
+
 export const LEGEND: { tone: DayTone; label: string }[] = [
   { tone: 'none', label: 'None' },
   { tone: 'low', label: 'Some' },

@@ -80,10 +80,11 @@ after an edit, an import, or a deleted habit.
 
 ## Testing
 
-161 tests, covering the logic that is easy to get quietly wrong:
+174 tests, covering the logic that is easy to get quietly wrong:
 
 - **Dates** — month and year boundaries, leap days, DST, week starts, clamping
-  (31 Jan + 1 month is 28 Feb, not 3 Mar).
+  (31 Jan + 1 month is 28 Feb, not 3 Mar), and the midnight rollover: an app
+  left open overnight must move to the new day before the next tap is recorded.
 - **Streaks** — daily, named-weekday and quota habits; unscheduled gaps, missed
   days, the open period, archived habits, month/year/leap-day crossings.
 - **Goals** — progress, pacing, achieved and partially achieved states, deleted
@@ -96,7 +97,9 @@ after an edit, an import, or a deleted habit.
 The UI was also checked in a real browser at 320 / 390 / 834 / 1440 px in both
 themes: no console errors, no horizontal overflow, focus trapped in dialogs,
 Escape closes them, focus returns to the trigger, and completions survive a
-reload.
+reload. Every figure the Insights screen displays was cross-checked against an
+independent recomputation from the raw stored data, so the wiring is verified
+and not just the pure functions.
 
 ## Accessibility
 
@@ -105,6 +108,12 @@ focus-trapped `role="dialog"`s; progress bars expose their values; state is
 never carried by colour alone (checks, counts and text back it up); visible
 focus rings throughout; `prefers-reduced-motion` is honoured and can also be
 forced on in Settings.
+
+Touch targets are at least 32 px on phones. Where a control is drawn smaller
+than that for visual balance, a `touch-target` utility grows its hit area to
+44 px on coarse pointers only — never where it would overlap a neighbour, which
+is why controls sitting side by side (a goal's edit and delete) were made
+genuinely larger instead.
 
 ## Notes
 

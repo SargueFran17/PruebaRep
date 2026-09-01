@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Download, Plus, Sparkles, Trash2, Upload, X } from 'lucide-react';
-import type { ThemePreference, WeekStart } from '@/domain/types';
+import type { Category, ThemePreference, WeekStart } from '@/domain/types';
 import {
   Button,
   Card,
@@ -131,11 +131,9 @@ export function SettingsPage() {
                 ).length;
                 return (
                   <li key={category.id} className="flex items-center gap-3 py-2.5 first:pt-0">
-                    <input
-                      value={category.name}
-                      aria-label={`Category name: ${category.name}`}
-                      onChange={(event) => renameCategory(category.id, event.target.value)}
-                      className="min-w-0 flex-1 rounded-sm bg-transparent px-1 py-1 text-[14px] text-ink transition-colors hover:bg-sunken focus:bg-sunken focus:outline-none"
+                    <CategoryNameInput
+                      category={category}
+                      onRename={(name) => renameCategory(category.id, name)}
                     />
                     <span className="tnum shrink-0 text-[12px] text-faint">
                       {inUse} {pluralise(inUse, 'habit')}
@@ -150,7 +148,7 @@ export function SettingsPage() {
                           : `Delete category ${category.name}`
                       }
                       title={category.system ? 'Built-in category' : 'Delete category'}
-                      className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-faint transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-25"
+                      className="touch-target grid h-7 w-7 shrink-0 place-items-center rounded-md text-faint transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-25"
                     >
                       <X size={14} strokeWidth={1.75} aria-hidden />
                     </button>
@@ -298,5 +296,45 @@ export function SettingsPage() {
         onCancel={() => setConfirm(null)}
       />
     </div>
+  );
+}
+
+/**
+ * Keeps the field editable while typing (including momentarily empty) but only
+ * commits a real name, falling back to the stored one if the user walks away
+ * having cleared it.
+ */
+function CategoryNameInput({
+  category,
+  onRename,
+}: {
+  category: Category;
+  onRename: (name: string) => void;
+}) {
+  const [draft, setDraft] = useState(category.name);
+  const [committed, setCommitted] = useState(category.name);
+
+  // Re-sync only when the stored name changes from outside this field (an
+  // import, a reset). A rejected empty edit leaves the stored name alone, so
+  // the user can keep the field cleared while they retype.
+  if (committed !== category.name) {
+    setCommitted(category.name);
+    setDraft(category.name);
+  }
+
+  return (
+    <input
+      value={draft}
+      aria-label={`Category name: ${category.name}`}
+      maxLength={24}
+      onChange={(event) => {
+        setDraft(event.target.value);
+        onRename(event.target.value);
+      }}
+      onBlur={() => {
+        if (!draft.trim()) setDraft(category.name);
+      }}
+      className="min-w-0 flex-1 rounded-sm bg-transparent px-1 py-1 text-[14px] text-ink transition-colors hover:bg-sunken focus:bg-sunken focus:outline-none"
+    />
   );
 }

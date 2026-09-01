@@ -98,29 +98,38 @@ describe('entries', () => {
     expect(Object.keys(useAppStore.getState().data.entries)).toHaveLength(0);
   });
 
-  it('increments without dropping below zero', () => {
+  it('never stores a negative amount', () => {
     const habit = useAppStore.getState().addHabit(draft);
-    useAppStore.getState().incrementHabit(habit.id, '2025-09-01', 5);
-    useAppStore.getState().incrementHabit(habit.id, '2025-09-01', 5);
-    expect(useAppStore.getState().data.entries[`${habit.id}|2025-09-01`]?.amount).toBe(10);
-
-    useAppStore.getState().incrementHabit(habit.id, '2025-09-01', -50);
+    useAppStore.getState().setEntryAmount(habit.id, '2025-09-01', -5);
     expect(useAppStore.getState().data.entries[`${habit.id}|2025-09-01`]).toBeUndefined();
   });
 
-  it('keeps fractional amounts usable', () => {
+  it('keeps fractional amounts exact', () => {
     const water = useAppStore.getState().addHabit({
       ...draft,
       name: 'Water',
       target: { kind: 'quantity', amount: 2, unit: 'L', step: 0.5 },
     });
-    useAppStore.getState().incrementHabit(water.id, '2025-09-01', 0.5);
-    useAppStore.getState().incrementHabit(water.id, '2025-09-01', 0.5);
-    expect(useAppStore.getState().data.entries[`${water.id}|2025-09-01`]?.amount).toBe(1);
+    // 0.5 + 0.5 + 0.5 in floating point is 1.5000000000000002 without rounding.
+    useAppStore.getState().setEntryAmount(water.id, '2025-09-01', 0.5 + 0.5 + 0.5);
+    expect(useAppStore.getState().data.entries[`${water.id}|2025-09-01`]?.amount).toBe(1.5);
   });
 });
 
 describe('categories', () => {
+  it('refuses to commit an empty category name', () => {
+    const category = useAppStore.getState().addCategory('Morning');
+    useAppStore.getState().renameCategory(category.id, '   ');
+    expect(
+      useAppStore.getState().data.categories.find((c) => c.id === category.id)?.name,
+    ).toBe('Morning');
+
+    useAppStore.getState().renameCategory(category.id, ' Evening ');
+    expect(
+      useAppStore.getState().data.categories.find((c) => c.id === category.id)?.name,
+    ).toBe('Evening');
+  });
+
   it('moves habits to Other when their category is deleted', () => {
     const category = useAppStore.getState().addCategory('Morning');
     const habit = useAppStore.getState().addHabit({ ...draft, categoryId: category.id });

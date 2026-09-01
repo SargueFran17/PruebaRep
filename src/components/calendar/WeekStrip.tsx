@@ -5,7 +5,7 @@ import type { DaySummary } from '@/domain/stats';
 import type { DateKey } from '@/domain/types';
 import { cn } from '@/lib/cn';
 import { formatLongDate, formatRange } from '@/lib/format';
-import { dayTone, TONE_FILL, TONE_LABEL, TONE_TEXT } from './dayTone';
+import { dayTone, describeDay, TONE_FILL, TONE_TEXT } from './dayTone';
 
 interface WeekStripProps {
   summaries: DaySummary[];
@@ -65,11 +65,7 @@ export function WeekStrip({
               onClick={() => onSelect(summary.date)}
               aria-pressed={isSelected}
               aria-current={isToday ? 'date' : undefined}
-              aria-label={`${formatLongDate(summary.date)} — ${
-                summary.rate === null
-                  ? 'nothing scheduled'
-                  : `${summary.completed} of ${summary.scheduled}, ${TONE_LABEL[tone]}`
-              }`}
+              aria-label={describeDay(summary, today, formatLongDate(summary.date))}
               className={cn(
                 'group flex flex-col items-center gap-1.5 rounded-md px-0.5 py-2 transition-colors duration-150',
                 isSelected ? 'bg-sunken' : 'hover:bg-sunken/60',
@@ -134,7 +130,7 @@ function NavButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="grid h-8 w-8 place-items-center rounded-md border border-line text-muted transition-colors hover:border-accent-line hover:text-ink disabled:pointer-events-none disabled:opacity-35"
+      className="grid h-9 w-9 place-items-center rounded-md border border-line text-muted transition-colors hover:border-accent-line hover:text-ink disabled:pointer-events-none disabled:opacity-35"
     >
       {children}
     </button>

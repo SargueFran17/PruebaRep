@@ -55,7 +55,7 @@ export function GoalRow({ progress, compact, onEdit, onDelete }: GoalRowProps) {
           ) : null}
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1">
           <span
             className={cn(
               'tnum text-[12.5px] font-medium',
@@ -111,7 +111,7 @@ function IconButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="grid h-7 w-7 place-items-center rounded-md text-faint transition-colors hover:bg-sunken hover:text-ink"
+      className="grid h-9 w-9 place-items-center rounded-md text-faint transition-colors hover:bg-sunken hover:text-ink"
     >
       {children}
     </button>

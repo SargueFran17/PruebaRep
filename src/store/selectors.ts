@@ -6,7 +6,6 @@ import {
   computeOverview,
   isDueOn,
   summariseRange,
-  todayKey,
   weekRange,
 } from '@/domain';
 import type {
@@ -18,18 +17,15 @@ import type {
   OverviewStats,
 } from '@/domain';
 import type { DateKey } from '@/domain/types';
+import { useToday } from '@/hooks/useToday';
 import { useAppStore } from './useAppStore';
+
+export { useToday };
 
 /**
  * Derived state lives here rather than in components: the store keeps raw
  * records, selectors turn them into the numbers screens render.
  */
-
-export function useToday(): DateKey {
-  // Recomputed per render but stable within a day; cheap and always correct
-  // across a midnight rollover without a timer.
-  return todayKey();
-}
 
 export function useSettings() {
   return useAppStore((state) => state.data.settings);

@@ -155,6 +155,27 @@
   .safe-bottom {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
+
+  /*
+   * Grows a small icon button's tap area to 44px on touch devices without
+   * changing how it is drawn. Only for controls with space around them —
+   * neighbours closer than 16px would end up with overlapping hit areas.
+   */
+  .touch-target {
+    position: relative;
+  }
+
+  @media (pointer: coarse) {
+    .touch-target::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100%, 44px);
+      height: max(100%, 44px);
+      transform: translate(-50%, -50%);
+    }
+  }
 }
 
 @keyframes cadence-pop {

@@ -35,7 +35,6 @@ export interface AppState {
 
   setEntryAmount: (habitId: string, date: DateKey, amount: number) => void;
   toggleHabit: (habitId: string, date: DateKey) => void;
-  incrementHabit: (habitId: string, date: DateKey, delta: number) => void;
 
   addGoal: (draft: GoalDraft) => Goal;
   updateGoal: (id: string, patch: Partial<GoalDraft>) => void;
@@ -189,12 +188,6 @@ export const useAppStore = create<AppState>()((set, get) => {
       get().setEntryAmount(habitId, date, next);
     },
 
-    incrementHabit: (habitId, date, delta) => {
-      const { data } = get();
-      const current = data.entries[entryKey(habitId, date)]?.amount ?? 0;
-      get().setEntryAmount(habitId, date, Math.max(0, current + delta));
-    },
-
     addGoal: (draft) => {
       const goal: Goal = { ...draft, id: createId('goal'), createdAt: new Date().toISOString() };
       mutate((data) => ({ ...data, goals: [...data.goals, goal] }));
@@ -219,10 +212,14 @@ export const useAppStore = create<AppState>()((set, get) => {
     },
 
     renameCategory: (id, name) => {
+      // A category with no name is unusable in every picker it appears in, so
+      // an empty edit is simply not committed.
+      const trimmed = name.trim();
+      if (!trimmed) return;
       mutate((data) => ({
         ...data,
         categories: data.categories.map((category) =>
-          category.id === id ? { ...category, name: name.trim() } : category,
+          category.id === id ? { ...category, name: trimmed } : category,
         ),
       }));
     },

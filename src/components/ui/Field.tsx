@@ -98,7 +98,7 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(option.value)}
             className={cn(
               'flex-1 rounded-sm px-2 font-medium transition-colors duration-150',
-              size === 'sm' ? 'h-7 text-[12px]' : 'h-8 text-[13px]',
+              size === 'sm' ? 'h-8 text-[12px]' : 'h-9 text-[13px]',
               selected
                 ? 'bg-surface text-ink shadow-card'
                 : 'text-muted hover:text-ink',
@@ -140,7 +140,7 @@ export function Switch({
         aria-label={label}
         onClick={() => onChange(!checked)}
         className={cn(
-          'relative mt-0.5 h-6 w-10 shrink-0 rounded-full border transition-colors duration-200',
+          'touch-target relative mt-0.5 h-6 w-10 shrink-0 rounded-full border transition-colors duration-200',
           checked ? 'border-accent bg-accent' : 'border-line-strong bg-sunken',
         )}
       >
