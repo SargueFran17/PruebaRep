@@ -3,9 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0F2747" />
     <meta name="description" content="Cadence — a calm, precise habit tracker for daily practice." />
+
+    <!-- The status bar meets the app's own ground rather than framing it, and
+         follows the theme the viewer is actually in. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f6f4" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0f14" />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- iOS ignores the manifest's icons for the home screen and reads this
+         one instead. It must be opaque: iOS applies its own rounded corners,
+         and a transparent PNG comes out with a black square behind it. -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Runs without Safari's chrome once added to the home screen. The first
+         is the modern spelling, the second the one iOS still reads. -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- "default" lets iOS pick the status bar text colour from the system
+         theme. "black-translucent" would put white text over the light theme. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Cadence" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
