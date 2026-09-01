@@ -1,0 +1,11 @@
+# Netlify reads this file from the repository, so the deploy settings live
+# with the code and cannot drift from what the dashboard happens to hold.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # package.json requires ^20.19 || >=22.12; Netlify's default image may ship
+  # an older Node, which would fail the build on the engines check.
+  NODE_VERSION = "22"
