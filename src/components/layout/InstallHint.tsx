@@ -7,9 +7,11 @@ import { readDismissed, shouldOfferInstallHint, writeDismissed } from '@/lib/ins
  * already on the home screen. Everywhere else the browser offers installation
  * itself, so this would be clutter.
  *
- * It sits in the flow at the end of the day's screen rather than floating over
- * it: nothing to dismiss before you can use the app, and one tap to be rid of
- * it for good.
+ * The share glyph sits inside the sentence rather than in a bordered tile:
+ * a tile here looks exactly like every other icon button in the app, and the
+ * button being described belongs to Safari, not to this page. It also says
+ * where that button is, because reaching this note means scrolling down, and
+ * scrolling down is what hides Safari's toolbar.
  */
 export function InstallHint() {
   const [visible, setVisible] = useState(() => {
@@ -22,19 +24,20 @@ export function InstallHint() {
 
   return (
     <aside className="flex items-start gap-3 rounded-lg border border-line bg-surface px-4 py-3.5">
-      <span
-        aria-hidden
-        className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md border border-line bg-sunken text-muted"
-      >
-        <Share size={15} strokeWidth={1.75} />
-      </span>
-
       <div className="min-w-0 flex-1">
         <p className="text-[13.5px] font-medium text-ink">Keep Cadence on your home screen</p>
-        <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted">
-          Tap Share, then <strong className="font-medium text-ink">Add to Home Screen</strong>. It
-          opens in one tap, and your history is no longer cleared when Safari tidies up storage
-          after a week away.
+        <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
+          In Safari&rsquo;s toolbar, tap
+          <span className="mx-1 inline-flex translate-y-0.5 items-center gap-1 text-ink">
+            <Share size={13} strokeWidth={1.75} aria-hidden />
+            <span className="font-medium">Share</span>
+          </span>
+          &mdash; scroll up if the toolbar is hidden &mdash; then choose{' '}
+          <strong className="font-medium text-ink">Add to Home Screen</strong>.
+        </p>
+        <p className="mt-1.5 text-[12px] leading-relaxed text-faint">
+          Cadence then opens in one tap, and your history is no longer cleared when Safari tidies
+          up storage after a week away.
         </p>
       </div>
 
